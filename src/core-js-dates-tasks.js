@@ -206,8 +206,11 @@ function getWeekNumberByDate(date) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  do date.setDate(date.getDate() + 1);
+  while (date.getDay() !== 5);
+  while (date.getDate() !== 13) date.setDate(date.getDate() + 7);
+  return date;
 }
 
 /**
@@ -221,8 +224,8 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  return Math.ceil((date.getMonth() + 1) / 3);
 }
 
 /**
@@ -243,8 +246,25 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  let beginning = period.start.split('-');
+  beginning = new Date(beginning[2], beginning[1] - 1, beginning[0]);
+  let end = period.end.split('-');
+  end = new Date(end[2], end[1] - 1, end[0]);
+  let counter = 0;
+  const res = [];
+  while (beginning <= end) {
+    if (counter % (countWorkDays + countOffDays) < countWorkDays) {
+      const temp = [];
+      temp.push(beginning.getDate().toString().padStart(2, '0'));
+      temp.push((beginning.getMonth() + 1).toString().padStart(2, '0'));
+      temp.push(beginning.getFullYear());
+      res.push(temp.join('-'));
+    }
+    counter += 1;
+    beginning.setDate(beginning.getDate() + 1);
+  }
+  return res;
 }
 
 /**
